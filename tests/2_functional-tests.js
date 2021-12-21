@@ -7,7 +7,8 @@ chai.use(chaiHttp);
 
 suite("Functional Tests", function () {
    let defaultUrl = "/api/issues/apitest";
-   let defaultId;
+   let defaultId1;
+   let defaultId2;
    /* Post Method */
    suite("Post Method", () => {
       test("Create an issue with every field", (done) => {
@@ -46,7 +47,8 @@ suite("Functional Tests", function () {
                   issue_text: "khanh text",
                   created_by: "khanhvtn",
                });
-               defaultId = _id;
+               defaultId1 = _id;
+               console.log(defaultId1);
                done();
             });
       });
@@ -87,6 +89,7 @@ suite("Functional Tests", function () {
                   issue_text: "khanh text",
                   created_by: "khanhvtn",
                });
+               defaultId2 = _id;
                done();
             });
       });
@@ -135,11 +138,13 @@ suite("Functional Tests", function () {
       test("View issues on a project with multiple filters", (done) => {
          chai
             .request(server)
-            .get("/api/issues/apitest?open=true&assigned_to=khanhvtn")
+            .get("/api/issues/apitest")
+            .query({ _id: defaultId1, open: true })
             .end((err, res) => {
                assert.equal(res.status, 200);
                assert.equal(res.type, "application/json");
                assert.isArray(res.body);
+               assert.isObject(res.body[0]);
                done();
             });
       });
@@ -151,7 +156,7 @@ suite("Functional Tests", function () {
             .request(server)
             .put(defaultUrl)
             .send({
-               _id: defaultId,
+               _id: defaultId1,
                issue_title: "khanhvtn update",
             })
             .end((err, res) => {
@@ -159,7 +164,7 @@ suite("Functional Tests", function () {
                assert.equal(res.type, "application/json");
                assert.deepEqual(res.body, {
                   result: "successfully updated",
-                  _id: defaultId,
+                  _id: defaultId1,
                });
                done();
             });
@@ -169,7 +174,7 @@ suite("Functional Tests", function () {
             .request(server)
             .put(defaultUrl)
             .send({
-               _id: defaultId,
+               _id: defaultId1,
                issue_title: "khanhvtn update",
                issue_text: "khanhvtn update",
                created_by: "khanhvtn",
@@ -182,7 +187,7 @@ suite("Functional Tests", function () {
                assert.equal(res.type, "application/json");
                assert.deepEqual(res.body, {
                   result: "successfully updated",
-                  _id: defaultId,
+                  _id: defaultId1,
                });
                done();
             });
@@ -208,14 +213,14 @@ suite("Functional Tests", function () {
             .request(server)
             .put(defaultUrl)
             .send({
-               _id: defaultId,
+               _id: defaultId1,
             })
             .end((err, res) => {
                assert.equal(res.status, 200);
                assert.equal(res.type, "application/json");
                assert.deepEqual(res.body, {
                   error: "no update field(s) sent",
-                  _id: defaultId,
+                  _id: defaultId1,
                });
                done();
             });
@@ -245,13 +250,13 @@ suite("Functional Tests", function () {
          chai
             .request(server)
             .delete(defaultUrl)
-            .send({ _id: defaultId })
+            .send({ _id: defaultId2 })
             .end((err, res) => {
                assert.equal(res.status, 200);
                assert.equal(res.type, "application/json");
                assert.deepEqual(res.body, {
                   result: "successfully deleted",
-                  _id: defaultId,
+                  _id: defaultId2,
                });
                done();
             });

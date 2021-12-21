@@ -30,7 +30,7 @@ module.exports = function (app, db) {
                };
             }
             if (_id) {
-               defaultFilter = { ...defaultFilter, _id };
+               defaultFilter = { ...defaultFilter, _id: new ObjectId(_id) };
             }
             if (issue_title) {
                defaultFilter = { ...defaultFilter, issue_title };
@@ -145,7 +145,6 @@ module.exports = function (app, db) {
                { returnNewDocument: true }
             );
             if (!updatedIssue.value) {
-               console.log("here");
                return res.json({ error: "could not update", _id });
             }
             return res.json({
