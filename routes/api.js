@@ -137,16 +137,20 @@ module.exports = function (app, db) {
 
          try {
             const collection = await db.collection(project);
-            const { value } = await collection.findOneAndUpdate(
+            const updatedIssue = await collection.findOneAndUpdate(
                { _id: new ObjectId(_id) },
                {
                   $set: { ...updateFields, updated_on: new Date() },
                },
                { returnNewDocument: true }
             );
+            if (!updatedIssue.value) {
+               console.log("here");
+               return res.json({ error: "could not update", _id });
+            }
             return res.json({
                result: "successfully updated",
-               _id: value._id.toString(),
+               _id: updatedIssue.value._id.toString(),
             });
          } catch (error) {
             return res.json({ error: error.message });
@@ -169,12 +173,18 @@ module.exports = function (app, db) {
                   _id,
                });
             }
-            const { value } = await collection.findOneAndDelete({
+            const deletedIssue = await collection.findOneAndDelete({
                _id: new ObjectId(_id),
             });
+            if (!deletedIssue.value) {
+               return res.json({
+                  error: "could not delete",
+                  _id,
+               });
+            }
             return res.json({
                result: "successfully deleted",
-               _id: value._id.toString(),
+               _id: deletedIssue.value._id.toString(),
             });
          } catch (error) {
             return res.json({ error: error.message });
