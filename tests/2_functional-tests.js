@@ -214,7 +214,7 @@ suite("Functional Tests", function () {
                assert.equal(res.status, 200);
                assert.equal(res.type, "application/json");
                assert.deepEqual(res.body, {
-                  result: "successfully updated",
+                  error: "no update field(s) sent",
                   _id: defaultId,
                });
                done();
@@ -231,7 +231,7 @@ suite("Functional Tests", function () {
                assert.equal(res.status, 200);
                assert.equal(res.type, "application/json");
                assert.deepEqual(res.body, {
-                  error: "no update field(s) sent",
+                  error: "could not update",
                   _id: "123",
                });
                done();

@@ -100,6 +100,16 @@ module.exports = function (app, db) {
             });
          }
          if (!ObjectId.isValid(_id)) {
+            return res.json({ error: "could not update", _id });
+         }
+         if (
+            !assigned_to &&
+            !status_text &&
+            !issue_title &&
+            !issue_text &&
+            !created_by &&
+            !open
+         ) {
             return res.json({ _id, error: "no update field(s) sent" });
          }
 
@@ -130,7 +140,7 @@ module.exports = function (app, db) {
             const { value } = await collection.findOneAndUpdate(
                { _id: new ObjectId(_id) },
                {
-                  $set: updateFields,
+                  $set: { ...updateFields, updated_on: new Date() },
                },
                { returnNewDocument: true }
             );
